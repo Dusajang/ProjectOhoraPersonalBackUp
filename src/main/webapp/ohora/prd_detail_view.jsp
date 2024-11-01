@@ -1,6 +1,10 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page trimDirectiveWhitespaces="true" %>
+<%
+    String productId = request.getParameter("pdt_id");
+    // productId를 사용해 DB에서 해당 상품 정보를 조회하여 화면에 출력하는 코드 작성
+%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -138,17 +142,63 @@
                             count = 10
                             -->
   <ul class="SP_prdListItemInfo" style="display: block;">
-  <li class="display_상품명 xans-record- SP_dfList_prdName">
-  <span class="title" style=""><!--<span style="">상품명</span>--></span><span class="SP_detail_content" style=""><span style="">N 쿠잉 네일</span></span>
-  </li><li class="xans-record- review_count"><span class="SP_detail_content">리뷰 40</span></li>
+  		<li class="display_상품명 xans-record- SP_dfList_prdName">
+  			<span class="title" style=""><!--<span style="">상품명</span>--></span>
+  			<span class="SP_detail_content" style=""><span style="">N 쿠잉 네일</span></span>
+  		</li>
+  		<li class="xans-record- review_count">
+	  		<span class="SP_detail_content">리뷰 
+	  			<span>40</span>
+	  		</span>
+  		</li>
                   <!-- <li class="display_영문상품명 xans-record- SP_dfList_engName" style="display: list-item;">
   <span class="title" style=""><span style="">영문상품명</span>></span><span class="SP_detail_content" style=""><span style="">N Cooing Nails</span></span>
   </li> -->
   <li class="display_가격 xans-record- SP_dfList_price strike" style="display: list-item;">
-  <span class="title" style="">가격</span><span class="SP_detail_content" style=""><span style=""><strong id="span_product_price_text" style="text-decoration: line-through;">14,800</strong><input id="product_price" name="product_price" value="" type="hidden" style=""></span><span class="salesPrice">12,580</span><span class="dcPercent">15%</span></span>
-  </li><li class="xans-record- SP_dfList_quantity" style="display: list-item;"><span class="title" style="">수량</span><span class="SP_detail_content"><a href="#none" class="down"></a><input id="quantity_clone" value="1" type="text" readonly=""><a href="#none" class="up"></a></span></li><li class="xans-record- SP_dfList_mileageInfo" style="display: list-item;"><!--<span class="title"><span>적립금</span></span><span class="SP_detail_content"><span class="point">로그인 후 적립금을 확인해보세요.</span></span>--></li>
+  	<span class="title" style="">가격</span>
+  	<span class="SP_detail_content" style="">
+  		<span style="">
+  			<strong id="span_product_price_text" style="text-decoration: line-through;">14,800</strong>
+  			<input id="product_price" name="product_price" value="" type="hidden" style="">
+  		</span>
+  		<span class="salesPrice">12,580</span>
+  		<span class="dcPercent">15%</span>
+  	</span>
+  </li>
+  <li class="xans-record- SP_dfList_quantity" style="display: list-item;">
+	  <span class="title" style="">수량</span>
+	  <span class="SP_detail_content">
+		  <a href="#none" class="down"></a>
+		  <input id="quantity_clone" value="1" type="text" readonly="">
+		  <a href="#none" class="up"></a>
+	  </span>
+  </li>
+  <li class="xans-record- SP_dfList_mileageInfo" style="display: list-item;"></li>
   <li class="display_할인판매가 xans-record- SP_dfList_salePrice" style="display: list-item;">
 
+
+<script>
+        // 상품 ID
+        var productId = ${productId};
+
+        // AJAX 요청 코드
+        $.ajax({
+            url: "/projectOhora/product/view.do",
+            type: "GET",
+            data: { id: productId },
+            dataType: "json",
+            success: function(response) {
+                $(".SP_detail_content span").text(response.pdt_name);
+                $(".SP_detail_content").text(response.pdt_review_count);
+                $("#product-price").text(response.pdt_amount);
+            },
+            error: function() {
+                alert("상품 정보를 불러오는 데 실패했습니다.");
+            }
+        });
+    </script>
+    
+    
     <script>
         // 주문 수량 기능
 document.querySelector(".down").onclick = function() {
@@ -220,7 +270,7 @@ document.querySelector(".up").onclick = function() {
               <!-- // 세트상품 -->
   
               <!-- 추가구성상품 -->
-              <link rel="stylesheet" href="/smartpc/include/detailPage/addProduct/st01_addProduct/_css/addProduct.css">
+              <!-- <link rel="stylesheet" href="/smartpc/include/detailPage/addProduct/st01_addProduct/_css/addProduct.css"> -->
   <!-- 추가 구성 상품 --><div class="xans-element- xans-product xans-product-addproduct SP_productAddSet_wrap view open"><div class="SP_prdAddSet_title">
           <h3>추가구성상품</h3>
           <a href="javascript:void(0);" class="SP_js_toggle_btn SP_prdAddSetToggle"></a>
@@ -393,66 +443,53 @@ document.querySelector(".SP_prdAddSetToggle").onclick = function() {
 
   </script>
               <!----------------------------------- 선택 상품 출력 영역 ----------------------------------->
-<%--               <div id="totalProducts" class="SP_totalProducts">
-				  <table border="0" summary="">
-				    <caption>상품 목록</caption>
-				    <colgroup><col style="width: auto"></colgroup>
-				    <thead>
-				      <tr>
-				        <th scope="col">상품명</th>
-				        <th scope="col">수량</th>
-				        <th scope="col">가격</th>
-				      </tr>
-				    </thead>
-				    <tbody class="SP_addQuantity">
-				      <c:forEach var="product" items="${selectedProducts}">
-				        <tr data-product-id="${product.id}">
-				          <td>${product.name}</td>
-				          <td>
-				            <span class="quantity">
-				              <a href="#none" onclick="decreaseQuantity(this)"><img src="//img.echosting.cafe24.com/skin/base_ko_KR/product/btn_count_down.gif" alt="수량감소" class="QuantityDown down"></a>
-				              <input id="quantity_${product.id}" name="quantity_opt[]" value="${product.quantity}" type="text" class="quantity-input">
-				              <a href="#none" onclick="increaseQuantity(this)"><img src="//img.echosting.cafe24.com/skin/base_ko_KR/product/btn_count_up.gif" alt="수량증가" class="QuantityUp up"></a>
-				            </span>
-				          </td>
-				          <td class="right">
-				            <span class="quantity_price">
-				              ${product.price * product.quantity}원
-				              <input type="hidden" name="option_box_price" class="option_box_price" value="${product.price}" item_code="${product.id}">
-				            </span>
-				          </td>
-				        </tr>
-				      </c:forEach>
-				    </tbody>
-				  </table>
-				</div>
-				
-				<script>
-				// 수량 증가 함수
-				function increaseQuantity(button) {
-				  const quantityInput = button.previousElementSibling;
-				  let quantity = parseInt(quantityInput.value);
-				  quantityInput.value = ++quantity;
-				  updatePrice(button.closest("tr"), quantity);
-				}
-
-				// 수량 감소 함수
-				function decreaseQuantity(button) {
-				  const quantityInput = button.nextElementSibling;
-				  let quantity = parseInt(quantityInput.value);
-				  if (quantity > 1) {
-				    quantityInput.value = --quantity;
-				    updatePrice(button.closest("tr"), quantity);
-				  }
-				}
-
-				// 가격 업데이트 함수
-				function updatePrice(row, quantity) {
-				  const priceElement = row.querySelector(".quantity_price");
-				  const unitPrice = parseInt(priceElement.querySelector("input").value);
-				  priceElement.innerHTML = `${(unitPrice * quantity).toLocaleString()}원<input type="hidden" name="option_box_price" class="option_box_price" value="${unitPrice}" item_code="${row.getAttribute('data-product-id')}">`;
-				}
-				</script> --%>
+              <div id="totalProducts" class="SP_totalProducts ">
+                <!-- <p class="ec-base-help txtWarn txt11 "> 수량을 선택해주세요.</p><p class="ec-base-help txtWarn txt11 displaynone"> 위 옵션선택 박스를 선택하시면 아래에 상품이 추가됩니다.</p> -->
+                <table border="0" summary="">
+  <caption>
+                    상품 목록
+                  </caption>
+                  <colgroup><col style="width: auto"></colgroup>
+  <thead><tr>
+  <th scope="col">상품명</th>
+                      <th scrop="col">수량</th>
+                      <th scope="col">가격</th>
+                    </tr></thead>
+  <tbody class=" SP_addQuantity" style="display: none;"><tr>
+  <td>수량</td>
+                      <td>
+                        <span class="quantity">
+                          <a href="#none"><img src="//img.echosting.cafe24.com/skin/base_ko_KR/product/btn_count_down.gif" alt="수량감소" class="QuantityDown down"></a>
+                          <input id="quantity" name="quantity_opt[]" style="" value="1" type="text">                        <a href="#none"><img src="//img.echosting.cafe24.com/skin/base_ko_KR/product/btn_count_up.gif" alt="수량증가" class="QuantityUp up"></a>
+                        </span>
+                      </td>
+                      <td class="right">
+                        <span class="quantity_price">14,800<input type="hidden" name="option_box_price" class="option_box_price" value="14800" item_code="P0000DCV000A"></span>원<span class="mileage displaynone" style="display: none;">(<img src=""> &nbsp;<span class="mileage_price"></span>)</span>
+                      </td>
+                    </tr></tbody>
+  <!-- 옵션선택 또는 세트상품 선택시 상품이 추가되는 영역입니다. 쇼핑몰 화면에는 아래와 같은 마크업구조로 표시됩니다. 삭제시 기능이 정상동작 하지 않습니다. --><tbody class="SP_addOptPrdTotal"><!-- tr>
+                                    <td>
+                                    <p class="product">
+                                    $상품명<br />
+                                    <span>$옵션</span>
+                                    </p>
+                                    </td>
+                                    <td>
+                                    <span class="quantity">
+                                    <input type="text" class="quantity_opt" />
+                                    &nbsp;<a href="#none"><img src="//img.echosting.cafe24.com/skin/base_ko_KR/product/btn_count_down.gif" alt="수량감소" class="down" /></a>
+                                    <a href="#none"><img src="//img.echosting.cafe24.com/skin/base_ko_KR/product/btn_count_up.gif" alt="수량증가" class="up" /></a>
+                                    </span>
+                                    <a href="#none"><img src="//img.echosting.cafe24.com/design/skin/default/product/btn_price_delete.gif" alt="삭제" class="option_box_del" /></a>
+                                    </td>
+                                    <td class="right">
+                                    <span>$가격</span>
+                                    <span class="mileage">(<img src="//img.echosting.cafe24.com/design/skin/admin/ko_KR/product/ico_pay_point.gif" /> &nbsp;<span class="mileage_price">$적립금</span>)</span>
+                                    </td>
+                                    </tr --></tbody>
+  <!-- // 옵션선택 또는 세트상품 선택시 상품이 추가되는 영역입니다. 쇼핑몰 화면에는 아래와 같은 마크업구조로 표시됩니다. 삭제시 기능이 정상동작 하지 않습니다. -->
+  </table>
+  </div>
               <!----------------------------------- //선택 상품 출력 영역 ----------------------------------->
               <!----------------------------------- 최종 금액 ----------------------------------->
               <div id="totalPrice" class="SP_totalPrice">

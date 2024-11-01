@@ -44,7 +44,7 @@
 						<li id="selected-menu-care"><a href="#">outlet</a></li>
 					</ul>
 
-					<ul class="menu_2ul">
+					<ul class="menu_ul2">
 						<li class="selected-menu-2" id="selected-menu-all"><a href="#">ALL</a></li>
 						<li id="selected-menu-nail">
 						    <a href="#" onclick="moveToCategory(1)">네일</a>
@@ -269,7 +269,8 @@
 					           <li id="itembox${ status.index + 1 }" class="item-wrap">
 							<div class="item-container">
 								<dl>
-									<a href="" class="item-viewlink"></a>
+										${pdt.pdt_id}
+									<a href="/projectOhora/product/view.do?product_id=${pdt.pdt_id}" class="item-viewlink"></a>
 									<div class="item-image">
 										<img src="../resources/images/prd_image/마롱네일1jpg.jpg" alt="" width="800" height="800" />
 										<img src="../resources/images/prd_image/마롱네일2.jpg" alt="" width="800" height="800" />

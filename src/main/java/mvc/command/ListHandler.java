@@ -81,6 +81,11 @@ public class ListHandler implements CommandHandler {
             } else {
                 pvo = new PagingVO(currentPage, numberPerPage, numberOfPageBlock, categoryNumber);
             }
+            
+            // 디버깅: 가져온 상품 리스트의 각 pdt_id를 출력
+            for (ProductDTO pdt : list) {
+                System.out.println("상품 ID: " + pdt.getPdt_id());
+            }
 
             // JSP로 데이터 전송
             request.setAttribute("list", list);  // 상품 목록 전송
@@ -88,6 +93,7 @@ public class ListHandler implements CommandHandler {
             request.setAttribute("categoryNumber", categoryNumber);
             request.setAttribute("searchWord", searchWord);
             request.setAttribute("sort", sort);
+            
 
         } finally {
             if (conn != null) conn.close();  // DB 연결 닫기
